@@ -213,7 +213,42 @@ class Character():
             query = "SELECT * FROM characters"
             characters = db.execute_query(query)
             return [cls._create_from_db(char_data) for char_data in characters]
+    
+    @classmethod
+    def get_character_by_id(cls, character_id: int) -> 'Character':
+        with Database() as db:
+            db.connect()
+            query = "SELECT * FROM characters WHERE id = ?"
+            char_data = db.execute_query(query, (character_id,))
+            if char_data:
+                return cls._create_from_db(char_data[0])
+            return None
+    
+    def update(self, firstname: str = None, lastname: str = None, lineage: str = None, generation: int = None, age: int = None, job: str = None, titles: list[str] = None, picture: str = "None") -> None:
+        if firstname:
+            self.firstname = firstname
+        if lastname:
+            self.lastname = lastname
+        if lineage:
+            self.lineage = lineage
+        if generation:
+            self.generation = generation
+        if age:
+            self.age = age
+        if job:
+            self.job = job
+        if titles is not None:
+            self.titles = titles
+        if picture:
+            self.picture = picture
         
+        with Database() as db:
+            print(f"Updating character {self.__id} in the database")
+            db.connect()
+            query = """
+                UPDATE characters SET firstname=?, lastname=?, lineage=?, generation=?, age=?, job=?, picture=? WHERE id=?
+            """
+            db.execute_update(query, (self.firstname, self.lastname, self.lineage, self.generation, self.age, self.job, self.picture, self.__id))           
     @classmethod
     def _create_from_db(cls, char_data: tuple) -> 'Character':
         character = cls(
@@ -256,3 +291,29 @@ class Character():
 
         return character
     
+    def create_character(self) -> None:
+        with Database() as db:
+            db.connect()
+            query = """
+                INSERT INTO characters (firstname, lastname, lineage, generation, age, job, picture)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """
+            db.execute_update(query, (self.firstname, self.lastname, self.lineage, self.generation, self.age, self.job, self.picture))
+            self.__id = db.cursor.lastrowid
+            for title in self.titles:
+                query = "INSERT INTO titles (character_id, title) VALUES (?, ?)"
+                db.execute_update(query, (self.__id, title))
+            
+            if self.__parents:
+                for parent in self.__parents:
+                    query = "INSERT INTO relationships (character1_id, character2_id, relationship_type) VALUES (?, ?, 'parent')"
+                    db.execute_update(query, (self.__id, parent.__id))
+
+            if self.__children:
+                for child in self.__children:
+                    query = "INSERT INTO relationships (character1_id, character2_id, relationship_type) VALUES (?, ?, 'child')"
+                    db.execute_update(query, (self.__id, child.__id))
+            
+            if self.__spouse:
+                query = "INSERT INTO relationships (character1_id, character2_id, relationship_type) VALUES (?, ?, 'spouse')"
+                db.execute_update(query, (self.__id, self.__spouse.__id))

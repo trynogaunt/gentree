@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from src.database.database import Database
 from src.classes.character import Character
+from src.gui.character_sheet import CharacterSheet
 
 class CharacterList(tk.Frame):
     def __init__(self, parent, characters: list[Character] = None):
@@ -17,9 +18,13 @@ class CharacterList(tk.Frame):
             character_frame.pack(pady=5, padx=10, fill=tk.X)
             character_label = ttk.Label(character_frame, text=character.full_name)
             character_label.pack(side=tk.LEFT, padx=5)
-            character_button = ttk.Button(character_frame, text="Edit", command=self.update_character)
+            character_button = ttk.Button(character_frame, text="Edit", command = lambda c=character: self.open_character(c))
             character_button.pack(side=tk.LEFT, padx=5)
-        
+    
+    def open_character(self, character: Character):
+        # Logic to open a character's details
+        character_sheet = CharacterSheet(self.parent, character, editable=True)
+        pass     
     def add_character(self):
         # Logic to add a character to the list
         pass
