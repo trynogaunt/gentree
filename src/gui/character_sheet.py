@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk
+from tkinter import filedialog
 from src.classes.character import Character
 class CharacterSheet(tk.Toplevel):
     def __init__(self, parent, character: 'Character' = None, editable : bool =False):
@@ -7,89 +9,43 @@ class CharacterSheet(tk.Toplevel):
         self.parent = parent
         self.character = character
         self.editable = editable
-        self.title("Character Sheet")
+        self.title(self.character.full_name if self.character else "Character Sheet")
+        self.geometry("400x500")
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.cancel_character)
 
+        self.main_frame = ttk.Frame(self)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
 
-        if editable:
-            self.create_editable_character_sheet()
-        else:
-            self.create_character_sheet()
-        
-    def create_character_sheet(self):
-        firstname_label = ttk.Label(self, text="First Name:")
-        firstname_text = ttk.Label(self, text=self.character.firstname)
-        lastname_label = ttk.Label(self, text="Last Name:")
-        lastname_text = ttk.Label(self, text=self.character.lastname)
-        lineage_label = ttk.Label(self, text="Lineage:")
-        lineage_text = ttk.Label(self, text=self.character.lineage)
-        generation_label = ttk.Label(self, text="Generation:")
-        generation_text = ttk.Label(self, text=self.character.generation)
-        age_label = ttk.Label(self, text="Age:")
-        age_text = ttk.Label(self, text=self.character.age)
-        job_label = ttk.Label(self, text="Job:")
-        job_text = ttk.Label(self, text=self.character.job)
-        titles_label = ttk.Label(self, text="Titles:")
-        titles_text = ttk.Label(self, text=", ".join(self.character.titles))
-        firstname_label.pack(pady=5, padx=10, anchor=tk.W)
-        firstname_text.pack(pady=5, padx=10, anchor=tk.W)
-        lastname_label.pack(pady=5, padx=10, anchor=tk.W)
-        lastname_text.pack(pady=5, padx=10, anchor=tk.W)
-        lineage_label.pack(pady=5, padx=10, anchor=tk.W)
-        lineage_text.pack(pady=5, padx=10, anchor=tk.W)
-        generation_label.pack(pady=5, padx=10, anchor=tk.W)
-        generation_text.pack(pady=5, padx=10, anchor=tk.W)
-        age_label.pack(pady=5, padx=10, anchor=tk.W)
-        age_text.pack(pady=5, padx=10, anchor=tk.W)
-        job_label.pack(pady=5, padx=10, anchor=tk.W)
-        job_text.pack(pady=5, padx=10, anchor=tk.W)
-        titles_label.pack(pady=5, padx=10, anchor=tk.W)
-        titles_text.pack(pady=5, padx=10, anchor=tk.W)
+        self.info_frame = ttk.Frame(self.main_frame, border=1, width=200)
+        self.info_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-    
-    def create_editable_character_sheet(self):
-        self.firstname_label = ttk.Label(self, text="First Name:")
-        self.firstname_entry = ttk.Entry(self)
-        self.firstname_label.pack(pady=5, padx=10, anchor=tk.W)
-        self.firstname_entry.pack(pady=5, padx=10, anchor=tk.W)
-        self.lastname_label = ttk.Label(self, text="Last Name:")
-        self.lastname_entry = ttk.Entry(self)
-        self.lastname_label.pack(pady=5, padx=10, anchor=tk.W)
-        self.lastname_entry.pack(pady=5, padx=10, anchor=tk.W)
-        self.lineage_label = ttk.Label(self, text="Lineage:")
-        self.lineage_entry = ttk.Entry(self)
-        self.lineage_label.pack(pady=5, padx=10, anchor=tk.W)
-        self.lineage_entry.pack(pady=5, padx=10, anchor=tk.W)
-        self.generation_label = ttk.Label(self, text="Generation:")
-        self.generation_entry = ttk.Entry(self)
-        self.generation_label.pack(pady=5, padx=10, anchor=tk.W)
-        self.generation_entry.pack(pady=5, padx=10, anchor=tk.W)
-        self.age_label = ttk.Label(self, text="Age:")
-        self.age_entry = ttk.Entry(self)
+        self.picture_frame = ttk.Frame(self.main_frame, border=1, relief=tk.SUNKEN, width=200)
+        self.picture_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        self.fullname_label = ttk.Label(self.info_frame, text=f"{self.character.full_name if self.character else 'Character Sheet'}", justify=tk.CENTER , anchor=tk.CENTER)
+        self.fullname_label.pack(pady=5, padx=10, anchor=tk.W)
+
+        self.age_label = ttk.Label(self.info_frame, text=f"Age: {self.character.age if self.character else 'N/A'}")
         self.age_label.pack(pady=5, padx=10, anchor=tk.W)
-        self.age_entry.pack(pady=5, padx=10, anchor=tk.W)
-        self.job_label = ttk.Label(self, text="Job:")
-        self.job_entry = ttk.Entry(self)
-        self.job_label.pack(pady=5, padx=10, anchor=tk.W)
-        self.job_entry.pack(pady=5, padx=10, anchor=tk.W)
-        self.titles_label = ttk.Label(self, text="Titles:")
-        self.titles_entry = ttk.Entry(self)
-        self.titles_label.pack(pady=5, padx=10, anchor=tk.W)
-        self.titles_entry.pack(pady=5, padx=10, anchor=tk.W)
 
-        if self.character:
-            self.firstname_entry.insert(0, self.character.firstname)
-            self.lastname_entry.insert(0, self.character.lastname)
-            self.lineage_entry.insert(0, self.character.lineage)
-            self.generation_entry.insert(0, self.character.generation)
-            self.age_entry.insert(0, self.character.age)
-            self.job_entry.insert(0, self.character.job)
-            self.titles_entry.insert(0, ", ".join(self.character.titles))
-        save_button = ttk.Button(self, text="Save", command= lambda : self.save_character())
-        save_button.pack(pady=10, padx=10, anchor=tk.W)
-        cancel_button = ttk.Button(self, text="Cancel", command=self.cancel_character)
-        cancel_button.pack(pady=10, padx=10, anchor=tk.W)
+        self.generation_label = ttk.Label(self.info_frame, text=f"Generation: {self.character.generation if self.character else 'N/A'}")
+        self.generation_label.pack(pady=5, padx=10, anchor=tk.W)
+
+        self.lineage_label = ttk.Label(self.info_frame, text=f"Lineage: {self.character.lineage if self.character else 'N/A'}")
+        self.lineage_label.pack(pady=5, padx=10, anchor=tk.W)
+
+        self.job_label = ttk.Label(self.info_frame, text=f"Job: {self.character.job if self.character else 'N/A'}")
+        self.job_label.pack(pady=5, padx=10, anchor=tk.W)
+
+        self.titles_label = ttk.Label(self.info_frame, text=f"Titles: {', '.join(self.character.titles) if self.character else 'N/A'}")
+        self.titles_label.pack(pady=5, padx=10, anchor=tk.W)
+
+        if self.character and hasattr(self.character, 'picture') and self.character.picture:
+            self.display_character_image(self.character.picture)
+
+
+
 
 
 
@@ -107,3 +63,19 @@ class CharacterSheet(tk.Toplevel):
     
     def cancel_character(self):
         self.destroy()
+    
+    def display_character_image(self, image_path):
+        try:
+            image = Image.open(image_path)
+            self.update_idletasks()
+            frame_width = self.winfo_width()
+            frame_height = self.winfo_height()
+            aspect_ratio = image.width / image.height
+            new_width = min(frame_width, (int(frame_height * aspect_ratio)))
+            new_height = min(frame_height, (int(frame_width / aspect_ratio)))
+            image = image.resize((400, new_height))
+            self.character_image = ImageTk.PhotoImage(image)
+            self.image_label = ttk.Label(self.picture_frame, image=self.character_image, anchor=tk.CENTER, justify=tk.CENTER)
+            self.image_label.place(in_=self.picture_frame, relx=0.5, rely=0.5, anchor=tk.CENTER)
+        except Exception as e:
+            print(f"Erreur lors du chargement de l'image : {e}")

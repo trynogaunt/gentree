@@ -291,29 +291,11 @@ class Character():
 
         return character
     
-    def create_character(self) -> None:
+    @classmethod
+    def create_character(cls, firstname : str, lastname : str, lineage : str , generation : int , age : age , picture : str, spouse : list[str] = None , children : list[str] = None , parent : list[str] = None) -> None:
         with Database() as db:
             db.connect()
             query = """
                 INSERT INTO characters (firstname, lastname, lineage, generation, age, job, picture)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             """
-            db.execute_update(query, (self.firstname, self.lastname, self.lineage, self.generation, self.age, self.job, self.picture))
-            self.__id = db.cursor.lastrowid
-            for title in self.titles:
-                query = "INSERT INTO titles (character_id, title) VALUES (?, ?)"
-                db.execute_update(query, (self.__id, title))
-            
-            if self.__parents:
-                for parent in self.__parents:
-                    query = "INSERT INTO relationships (character1_id, character2_id, relationship_type) VALUES (?, ?, 'parent')"
-                    db.execute_update(query, (self.__id, parent.__id))
-
-            if self.__children:
-                for child in self.__children:
-                    query = "INSERT INTO relationships (character1_id, character2_id, relationship_type) VALUES (?, ?, 'child')"
-                    db.execute_update(query, (self.__id, child.__id))
-            
-            if self.__spouse:
-                query = "INSERT INTO relationships (character1_id, character2_id, relationship_type) VALUES (?, ?, 'spouse')"
-                db.execute_update(query, (self.__id, self.__spouse.__id))

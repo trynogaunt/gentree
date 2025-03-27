@@ -23,7 +23,7 @@ class CharacterList(tk.Frame):
     
     def open_character(self, character: Character):
         # Logic to open a character's details
-        character_sheet = CharacterSheet(self.parent, character, editable=True)
+        character_sheet = CharacterSheet(self.parent, character, editable=False)
         pass     
     def add_character(self):
         # Logic to add a character to the list
