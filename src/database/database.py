@@ -5,12 +5,12 @@ class Database:
     _instance = None
     _initialized = False
 
-    def __new__(cls, db_path: str = "C:\Users\Quentin\Desktop\Github\gentree\src\data\db.sqlite"):
+    def __new__(cls, db_path: str = "data\db.sqlite"):
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    def __init__(self, db_path: str = "C:\Users\Quentin\Desktop\Github\gentree\src\data\db.sqlite"):
+    def __init__(self, db_path: str = "data\db.sqlite"):
         if not self._initialized:
             self.db_path = Path(db_path)
             self.db_path.parent.mkdir(parents=True, exist_ok=True)

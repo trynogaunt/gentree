@@ -1,4 +1,4 @@
-import sqlite3
+from src.database.database import Database
 
 class Character():
     def __init__(self, firstname: str, lastname: str, lineage: str, generation: int, age: int, job: str, titles: list, picture: str):
@@ -205,3 +205,54 @@ class Character():
                 tree['children'].append(child_tree)
 
         return tree
+
+    @classmethod
+    def get_characters(cls) -> list['Character']:
+        with Database() as db:
+            db.connect()
+            query = "SELECT * FROM characters"
+            characters = db.execute_query(query)
+            return [cls._create_from_db(char_data) for char_data in characters]
+        
+    @classmethod
+    def _create_from_db(cls, char_data: tuple) -> 'Character':
+        character = cls(
+            firstname=char_data[1],
+            lastname=char_data[2],
+            lineage=char_data[3],
+            generation=char_data[4],
+            age=char_data[5],
+            job=char_data[6],
+            titles=[],
+            picture=char_data[7]
+        )
+        
+        character.__id = char_data[0]
+        with Database() as db:
+            db.connect()
+            query = "SELECT title FROM titles WHERE character_id = ?"
+            titles = db.execute_query(query, (character.__id,))
+            character.titles = [title[0] for title in titles]
+        
+        with Database() as db:
+            # Load parents
+            query = """
+                SELECT c.* FROM characters c
+                JOIN relationships r ON c.id = r.character1_id
+                WHERE r.character2_id = ? AND r.relationship_type = 'parent'
+            """
+            parents = db.execute_query(query, (character.__id,))
+            character.__parents = [cls._create_from_db(parent) for parent in parents]
+
+            # Load spouse
+            query = """
+                SELECT c.* FROM characters c
+                JOIN relationships r ON c.id = r.character2_id
+                WHERE r.character1_id = ? AND r.relationship_type = 'spouse'
+            """
+            spouse = db.execute_query(query, (character.__id,))
+            if spouse:
+                character.__spouse = cls._create_from_db(spouse[0])
+
+        return character
+    
