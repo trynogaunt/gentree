@@ -1,0 +1,4 @@
+.vscode/launch.json
+src/classes/__pycache__/character.cpython-313.pyc
+src/data/db.sqlite
+tests/__pycache__/character_test.cpython-313.pyc
