@@ -12,11 +12,11 @@ class CharacterList(tk.Frame):
         self.button = ttk.Button(self, text="Add Character", command=self.add_character)
         self.button.pack(pady=10)
         for character in characters:
-            print(character.full_name)
+            print(character)
             # Display character information in the GUI
             character_frame = ttk.Frame(self)
             character_frame.pack(pady=5, padx=10, fill=tk.X)
-            character_label = ttk.Label(character_frame, text=character.full_name)
+            character_label = ttk.Label(character_frame, text=character)
             character_label.pack(side=tk.LEFT, padx=5)
             character_button = ttk.Button(character_frame, text="Edit", command = lambda c=character: self.open_character(c))
             character_button.pack(side=tk.LEFT, padx=5)

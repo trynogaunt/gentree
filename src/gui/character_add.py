@@ -52,3 +52,17 @@ class CharacterAdd(tk.Toplevel):
         self.titles_entry.pack(pady=5, padx=10, anchor=tk.W)
 
         save_button = ttk.Button(self, text="Save", command=self.save_character())
+
+    def save_character(self):
+        # Create a new character object and save it to the database
+        character = Character(
+            firstname=self.firstname_entry.get(),
+            lastname=self.lastname_entry.get(),
+            lineage=self.lineage_entry.get(),
+            generation=int(self.generation_entry.get()),
+            age=int(self.age_entry.get()),
+            job=self.job_entry.get(),
+            titles=self.titles_entry.get().split(", ")
+        )
+        character.save()
+        self.destroy()

@@ -7,7 +7,7 @@ class App(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.characters : list[Character]= Character.get_characters()
+        self.characters : list[Character]= Character.get_all()
         self.pack( fill=tk.BOTH, expand=True )
         
         self.notebook = ttk.Notebook(self)

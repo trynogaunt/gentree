@@ -9,7 +9,7 @@ class CharacterSheet(tk.Toplevel):
         self.parent = parent
         self.character = character
         self.editable = editable
-        self.title(self.character.full_name if self.character else "Character Sheet")
+        self.title(self.character if self.character else "Character Sheet")
         self.geometry("400x500")
         self.resizable(False, False)
         self.protocol("WM_DELETE_WINDOW", self.cancel_character)
@@ -23,7 +23,7 @@ class CharacterSheet(tk.Toplevel):
         self.picture_frame = ttk.Frame(self.main_frame, border=1, relief=tk.SUNKEN, width=200)
         self.picture_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
-        self.fullname_label = ttk.Label(self.info_frame, text=f"{self.character.full_name if self.character else 'Character Sheet'}", justify=tk.CENTER , anchor=tk.CENTER)
+        self.fullname_label = ttk.Label(self.info_frame, text=f"{self.character if self.character else 'Character Sheet'}", justify=tk.CENTER , anchor=tk.CENTER)
         self.fullname_label.pack(pady=5, padx=10, anchor=tk.W)
 
         self.age_label = ttk.Label(self.info_frame, text=f"Age: {self.character.age if self.character else 'N/A'}")
