@@ -54,8 +54,6 @@ class DatabaseInterface:
     
     def get_all[Cls](self, cls : Type[Cls]) -> list[Cls]:
         return self.get_all_by(cls)
-        
-    def save()    
     
     def __call__(self, cls):
         cls.get_all = classmethod(self.get_all)

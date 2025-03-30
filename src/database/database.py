@@ -11,7 +11,7 @@ class Database(ContextDecorator):
         super().__init__()
         self.connection = None
         self.cursor = None
-        self.db_path = "C:/Users/Quentin/Desktop/Github/gentree/data/db.sqlite"
+        self.db_path = "/data/db.sqlite"
     
     def connect(self):
         if not self.connection:
